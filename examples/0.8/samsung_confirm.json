@@ -1,0 +1,201 @@
+[
+  {
+    "version": "v0.8",
+    "createSurface": {
+      "surfaceId": "action-modal",
+      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
+      "theme": {
+        "primaryColor": "#0C4DA2",
+        "font": "Roboto"
+      }
+    }
+  },
+  {
+    "version": "v0.8",
+    "updateComponents": {
+      "surfaceId": "action-modal",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "Card": {
+              "child": "main-column"
+            }
+          }
+        },
+        {
+          "id": "main-column",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "header-row",
+                  "products-row",
+                  "question-text",
+                  "buttons-row"
+                ]
+              },
+              "align": "center",
+              "justify": "center"
+            }
+          }
+        },
+        {
+          "id": "header-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["header-icon", "header-text"]
+              },
+              "align": "center",
+              "justify": "center"
+            }
+          }
+        },
+        {
+          "id": "header-icon",
+          "component": {
+            "Icon": {
+              "name": "compare_arrows"
+            }
+          }
+        },
+        {
+          "id": "header-text",
+          "component": {
+            "Text": {
+              "text": "제품 비교",
+              "usageHint": "h3"
+            }
+          }
+        },
+        {
+          "id": "products-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["product-1-name", "vs-text", "product-2-name"]
+              },
+              "align": "center",
+              "justify": "center"
+            }
+          }
+        },
+        {
+          "id": "product-1-name",
+          "weight": 2,
+          "component": {
+            "Text": {
+              "text": { "path": "/product1" },
+              "usageHint": "h4"
+            }
+          }
+        },
+        {
+          "id": "vs-text",
+          "weight": 1,
+          "component": {
+            "Text": {
+              "text": "vs",
+              "usageHint": "body",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "id": "product-2-name",
+          "weight": 2,
+          "component": {
+            "Text": {
+              "text": { "path": "/product2" },
+              "usageHint": "h4"
+            }
+          }
+        },
+        {
+          "id": "question-text",
+          "weight": 1,
+          "component": {
+            "Text": {
+              "text": "비교하시겠습니까?",
+              "usageHint": "body",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "id": "buttons-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["yes-button", "no-button"]
+              },
+              "justify": "spaceEvenly",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "id": "yes-button-text",
+          "component": {
+            "Text": {
+              "text": "Yes"
+            }
+          }
+        },
+        {
+          "id": "yes-button",
+          "component": {
+            "Button": {
+              "child": "yes-button-text",
+              "variant": "primary",
+              "action": {
+                "event": {
+                  "name": "compareYes"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "no-button-text",
+          "component": {
+            "Text": {
+              "text": "No"
+            }
+          }
+        },
+        {
+          "id": "no-button",
+          "component": {
+            "Button": {
+              "child": "no-button-text",
+              "variant": "default",
+              "action": {
+                "event": {
+                  "name": "compareNo"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "action-modal",
+      "path": "/",
+      "contents": [
+        {
+          "key": "product1",
+          "valueString": "[Product 1]"
+        },
+        {
+          "key": "product2",
+          "valueString": "[Product 2]"
+        }
+      ]
+    }
+  }
+]

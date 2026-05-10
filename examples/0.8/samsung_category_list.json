@@ -1,0 +1,125 @@
+[
+  {
+    "version": "v0.8",
+    "createSurface": {
+      "surfaceId": "action-modal",
+      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
+      "theme": {
+        "primaryColor": "#0C4DA2",
+        "font": "Roboto"
+      }
+    }
+  },
+  {
+    "version": "v0.8",
+    "updateComponents": {
+      "surfaceId": "action-modal",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["title-heading", "category-list"]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-heading",
+          "component": {
+            "Text": {
+              "usageHint": "h3",
+              "text": { "path": "/title" }
+            }
+          }
+        },
+        {
+          "id": "category-list",
+          "component": {
+            "List": {
+              "direction": "vertical",
+              "children": {
+                "template": {
+                  "componentId": "category-item-template",
+                  "dataBinding": "/categories"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "category-item-template",
+          "component": {
+            "Card": {
+              "child": "category-layout",
+              "width": 80
+            }
+          }
+        },
+        {
+          "id": "category-layout",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["category-text", "select-button"]
+              },
+              "justify": "spaceBetween",
+              "align": "center"
+            }
+          }
+        },
+        {
+          "id": "category-text",
+          "component": {
+            "Text": {
+              "usageHint": "body1",
+              "text": { "path": "/category" }
+            }
+          }
+        },
+        {
+          "id": "select-button",
+          "component": {
+            "Button": {
+              "child": "select-text",
+              "action": {
+                "name": "select_category",
+                "context": {
+                  "name": { "path": "/category" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "select-text",
+          "component": {
+            "Text": {
+              "text": "선택"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "action-modal",
+      "path": "/",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "카테고리를 선택해주세요."
+        },
+        {
+          "key": "categories",
+          "valueMap": [
+            { "key": "item1", "valueMap": [{ "key": "category", "valueString": "스마트폰" }] },
+            { "key": "item2", "valueMap": [{ "key": "category", "valueString": "태블릿" }] }
+          ]
+        }
+      ]
+    }
+  }
+]

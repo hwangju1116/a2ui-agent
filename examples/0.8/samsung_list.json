@@ -1,0 +1,176 @@
+[
+  {
+    "version": "v0.8",
+    "createSurface": {
+      "surfaceId": "action-modal",
+      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
+      "theme": {
+        "primaryColor": "#0C4DA2",
+        "font": "Roboto"
+      }
+    }
+  },
+  {
+    "version": "v0.8",
+    "updateComponents": {
+      "surfaceId": "action-modal",
+      "components": [
+        {
+          "id": "root",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["title-heading", "item-list"]
+              }
+            }
+          }
+        },
+        {
+          "id": "title-heading",
+          "component": {
+            "Text": {
+              "usageHint": "h3",
+              "text": { "path": "/title" }
+            }
+          }
+        },
+        {
+          "id": "item-list",
+          "component": {
+            "List": {
+              "direction": "horizontal",
+              "align": "start",
+              "children": {
+                "template": {
+                  "componentId": "item-card-template",
+                  "dataBinding": "/items"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "item-card-template",
+          "component": {
+            "Card": {
+              "child": "card-layout",
+              "width": 120,
+              "height": 200
+            }
+          }
+        },
+        {
+          "id": "card-layout",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": ["card-image", "card-content"]
+              }
+            }
+          }
+        },
+        {
+          "id": "card-image",
+          "component": {
+            "Image": {
+              "url": { "path": "/imageUrl" },
+              "fit": "contain",
+              "width": 100,
+              "height": 100
+            }
+          }
+        },
+        {
+          "id": "card-content",
+          "component": {
+            "Column": {
+              "children": {
+                "explicitList": [
+                  "name-row",
+                  "category-text",
+                  "select-button"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "name-row",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": ["prod-name"]
+              }
+            }
+          }
+        },
+        {
+          "id": "prod-name",
+          "component": {
+            "Text": {
+              "usageHint": "body2",
+              "text": { "path": "/name" }
+            }
+          }
+        },
+        {
+          "id": "category-text",
+          "component": {
+            "Text": {
+              "usageHint": "caption",
+              "text": { "path": "/category" }
+            }
+          }
+        },
+        {
+          "id": "select-button",
+          "component": {
+            "Button": {
+              "child": "select-text",
+              "action": {
+                "name": "select_product",
+                "context": {
+                  "name": { "path": "/name" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "select-text",
+          "component": {
+            "Text": {
+              "text": "선택"
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "action-modal",
+      "path": "/",
+      "contents": [
+        {
+          "key": "title",
+          "valueString": "Samsung Products"
+        },
+        {
+          "key": "items",
+          "valueMap": [
+            {
+              "key": "item1",
+              "valueMap": [
+                { "key": "name", "valueString": "Galaxy S24" },
+                { "key": "category", "valueString": "스마트폰" },
+                { "key": "imageUrl", "valueString": "https://picsum.photos/100/100?random=1" },
+                { "key": "selected", "valueBoolean": false }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+]
