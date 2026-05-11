@@ -65,6 +65,7 @@ if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
     sys.path.insert(0, sdk_src_path)
 
 import a2a
+import shutil
 from a2a.types import AgentSkill
 from agent import SamsungAgent
 import agent_executor
@@ -174,6 +175,10 @@ def _register_agent_on_gemini_enterprise(
 
 def main():
   a2a_path = os.path.dirname(a2a.__file__)
+  dest_path = os.path.join(os.path.dirname(__file__), "a2a")
+  if not os.path.exists(dest_path):
+      print(f"Copying a2a from {a2a_path} to {dest_path} for deployment...")
+      shutil.copytree(a2a_path, dest_path, dirs_exist_ok=True)
 
   project_id = os.environ.get("PROJECT_ID")
   location = os.environ.get("LOCATION")
@@ -301,7 +306,7 @@ def main():
           "state_manager.py",
           "examples",
           "libs",
-          a2a_path,
+          "a2a",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
