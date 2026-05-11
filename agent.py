@@ -202,6 +202,8 @@ class SamsungAgent:
       runner = self._text_runner
       selected_catalog = None
 
+    import os
+    logger.info(f"--- ENV VARS: {dict(os.environ)} ---")
     try:
         session = await runner.session_service.get_session(
             app_name=self._agent_name,
