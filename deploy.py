@@ -15,6 +15,46 @@
 """Main file for creating and managing A2UI agents on Agent Engine."""
 
 import json
+from google.protobuf import json_format
+
+old_MessageToJson = json_format.MessageToJson
+old_MessageToDict = json_format.MessageToDict
+
+def is_pydantic_like(obj):
+    # 프로토콜 버퍼 메시지는 반드시 'DESCRIPTOR' 속성을 가집니다.
+    # DESCRIPTOR가 없고, dict나 json 변환 메서드를 가졌다면 Pydantic류 객체로 판단합니다.
+    return not hasattr(obj, "DESCRIPTOR") and (
+        hasattr(obj, "model_dump") or 
+        hasattr(obj, "dict") or 
+        hasattr(obj, "model_dump_json") or 
+        hasattr(obj, "json") or
+        type(obj).__name__ == "AgentCard"
+    )
+
+def new_MessageToJson(message, *args, **kwargs):
+    if is_pydantic_like(message):
+        if hasattr(message, "model_dump_json"):
+            return message.model_dump_json()
+        elif hasattr(message, "json"):
+            return message.json()
+        elif hasattr(message, "model_dump"):
+            return json.dumps(message.model_dump())
+        elif hasattr(message, "dict"):
+            return json.dumps(message.dict())
+    return old_MessageToJson(message, *args, **kwargs)
+
+json_format.MessageToJson = new_MessageToJson
+
+def new_MessageToDict(message, *args, **kwargs):
+    if is_pydantic_like(message):
+        if hasattr(message, "model_dump"):
+            return message.model_dump()
+        elif hasattr(message, "dict"):
+            return message.dict()
+    return old_MessageToDict(message, *args, **kwargs)
+
+json_format.MessageToDict = new_MessageToDict
+
 import os
 import subprocess
 
@@ -30,35 +70,6 @@ import requests
 import vertexai
 from vertexai.preview.reasoning_engines import A2aAgent
 from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
-
-# Monkey-patch to resolve AttributeError: 'AgentCard' object has no attribute 'DESCRIPTOR'
-from google.protobuf import json_format
-import pydantic
-
-old_MessageToJson = json_format.MessageToJson
-
-def new_MessageToJson(message, *args, **kwargs):
-    if isinstance(message, pydantic.BaseModel):
-        if hasattr(message, "model_dump_json"):
-            return message.model_dump_json()
-        else:
-            return message.json()
-    return old_MessageToJson(message, *args, **kwargs)
-
-json_format.MessageToJson = new_MessageToJson
-
-old_MessageToDict = json_format.MessageToDict
-
-def new_MessageToDict(message, *args, **kwargs):
-    if isinstance(message, pydantic.BaseModel):
-        if hasattr(message, "model_dump"):
-            return message.model_dump()
-        else:
-            return message.dict()
-    return old_MessageToDict(message, *args, **kwargs)
-
-json_format.MessageToDict = new_MessageToDict
-
 
 def _get_bearer_token():
   """Gets a bearer token for authenticating with Google Cloud."""
