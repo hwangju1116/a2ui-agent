@@ -74,6 +74,20 @@ class RESTHandler:
             A `dict` containing the result (Task or Message)
         """
         body = await request.body()
+        import json
+        try:
+            js = json.loads(body)
+            if "message" in js:
+                if isinstance(js["message"], str):
+                    js["message"] = {"content": [{"text": js["message"]}]}
+                elif isinstance(js["message"], dict) and "content" in js["message"]:
+                    content = js["message"]["content"]
+                    if isinstance(content, str):
+                        js["message"]["content"] = [{"text": content}]
+            body = json.dumps(js).encode('utf-8')
+        except Exception as e:
+            logger.warning(f"Failed to preprocess body: {e}")
+
         params = a2a_pb2.SendMessageRequest()
         Parse(body, params)
         # Transform the proto object to the python internal objects

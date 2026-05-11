@@ -202,11 +202,16 @@ class SamsungAgent:
       runner = self._text_runner
       selected_catalog = None
 
-    session = await runner.session_service.get_session(
-        app_name=self._agent_name,
-        user_id=self._user_id,
-        session_id=session_id,
-    )
+    try:
+        session = await runner.session_service.get_session(
+            app_name=self._agent_name,
+            user_id=self._user_id,
+            session_id=session_id,
+        )
+    except Exception as e:
+        logger.warning(f"Failed to get session {session_id}: {e}. Creating new one.")
+        session = None
+
     if session is None:
       session = await runner.session_service.create_session(
           app_name=self._agent_name,
