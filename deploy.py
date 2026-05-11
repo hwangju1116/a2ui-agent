@@ -176,6 +176,25 @@ def main():
   project_id = os.environ.get("PROJECT_ID")
   location = os.environ.get("LOCATION")
   storage = os.environ.get("STORAGE_BUCKET")
+  
+  # Auto-generate bucket name if missing or default
+  if not storage or storage == "a2ui-bucket" or storage == "gs://a2ui-bucket":
+      import uuid
+      from datetime import datetime
+      import dotenv
+      
+      date_str = datetime.now().strftime("%Y%m%d")
+      unique_id = str(uuid.uuid4())[:8]
+      storage = f"a2ui-agent-bucket-{date_str}-{unique_id}"
+      print(f"Auto-generating unique bucket name: {storage}")
+      
+      # Update .env file
+      dotenv.set_key(".env", "STORAGE_BUCKET", storage)
+      print("✓ Updated .env file with new bucket name.")
+      
+      # Also update environment variable for current run
+      os.environ["STORAGE_BUCKET"] = storage
+      
   app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
   api_endpoint = f"{location}-aiplatform.googleapis.com"
   
@@ -260,11 +279,9 @@ def main():
           "google-genai>=1.27.0",
           "python-dotenv>=1.1.0",
           "uvicorn",
-          "a2a-sdk==0.3.25",
           "cloudpickle>=3.1.2",
           "pydantic",
           "jsonschema>=4.0.0",
-          "a2ui-agent-sdk==0.1.2",
           "google-cloud-firestore",
       ],
       "http_options": {
@@ -280,6 +297,7 @@ def main():
           "tools.py",
           "state_manager.py",
           "examples",
+          "libs",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
