@@ -279,7 +279,6 @@ def main():
           "google-genai>=1.27.0",
           "python-dotenv>=1.1.0",
           "uvicorn",
-          "a2a-sdk",
           "cloudpickle>=3.1.2",
           "pydantic",
           "jsonschema>=4.0.0",
@@ -300,6 +299,7 @@ def main():
           "state_manager.py",
           "examples",
           "libs",
+          "a2a",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
