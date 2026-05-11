@@ -64,6 +64,7 @@ sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
 if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
     sys.path.insert(0, sdk_src_path)
 
+import a2a
 from a2a.types import AgentSkill
 from agent import SamsungAgent
 import agent_executor
@@ -172,6 +173,7 @@ def _register_agent_on_gemini_enterprise(
 
 
 def main():
+  a2a_path = os.path.dirname(a2a.__file__)
 
   project_id = os.environ.get("PROJECT_ID")
   location = os.environ.get("LOCATION")
@@ -299,7 +301,7 @@ def main():
           "state_manager.py",
           "examples",
           "libs",
-          "a2a",
+          a2a_path,
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
