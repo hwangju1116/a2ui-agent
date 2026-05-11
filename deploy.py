@@ -31,6 +31,22 @@ import vertexai
 from vertexai.preview.reasoning_engines import A2aAgent
 from vertexai.preview.reasoning_engines.templates.a2a import create_agent_card
 
+# Monkey-patch to resolve AttributeError: 'AgentCard' object has no attribute 'DESCRIPTOR'
+from google.protobuf import json_format
+import pydantic
+
+old_MessageToJson = json_format.MessageToJson
+
+def new_MessageToJson(message, *args, **kwargs):
+    if isinstance(message, pydantic.BaseModel):
+        if hasattr(message, "model_dump_json"):
+            return message.model_dump_json()
+        else:
+            return message.json()
+    return old_MessageToJson(message, *args, **kwargs)
+
+json_format.MessageToJson = new_MessageToJson
+
 
 def _get_bearer_token():
   """Gets a bearer token for authenticating with Google Cloud."""
@@ -151,11 +167,15 @@ def main():
 
   print("≈" * 120)
 
+  staging_bucket = storage
+  if storage and not storage.startswith("gs://"):
+      staging_bucket = f"gs://{storage}"
+
   vertexai.init(
       project=project_id,
       location=location,
       api_endpoint=api_endpoint,
-      staging_bucket=storage,
+      staging_bucket=staging_bucket,
   )
 
   print("✓ Vertex AI client initialized.")
@@ -207,7 +227,7 @@ def main():
           "A helpful assistant agent that uses A2UI to render Samsung product comparisons."
       ),
       "agent_framework": "google-adk",
-      "staging_bucket": storage,
+      "staging_bucket": staging_bucket,
       "gcs_dir_name": "v1",
       "requirements": [
           "google-cloud-aiplatform[agent_engines,adk]",
