@@ -139,17 +139,21 @@ class SamsungAgent:
     import vertexai
     vertexai.init(project=project_id, location=location)
     
-    engine_id = "default_engine"
-    try:
-        engines = reasoning_engines.ReasoningEngine.list()
-        samsung_engines = [e for e in engines if e.display_name == "A2UI Samsung Agent on Agent Engine"]
-        
-        if samsung_engines:
-            # Pick the first one (assuming list returns latest first or after cleanup only few left)
-            engine_id = samsung_engines[0].resource_name.split("/")[-1]
-            print(f"--- Found current engine ID for Memory Bank: {engine_id}")
-    except Exception as e:
-        print(f"--- Failed to list engines or find ID: {e}. Using default_engine.")
+    engine_id = os.environ.get("GOOGLE_CLOUD_AGENT_ENGINE_ID")
+    if engine_id:
+        print(f"--- Found current engine ID from environment: {engine_id}")
+    else:
+        engine_id = "default_engine"
+        try:
+            engines = reasoning_engines.ReasoningEngine.list()
+            samsung_engines = [e for e in engines if e.display_name == "A2UI Samsung Agent on Agent Engine"]
+            
+            if samsung_engines:
+                # Pick the first one (assuming list returns latest first or after cleanup only few left)
+                engine_id = samsung_engines[0].resource_name.split("/")[-1]
+                print(f"--- Found current engine ID for Memory Bank: {engine_id}")
+        except Exception as e:
+            print(f"--- Failed to list engines or find ID: {e}. Using default_engine.")
     
     return Runner(
         app_name=self._agent_name,
