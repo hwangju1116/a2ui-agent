@@ -21,12 +21,5 @@ requires-python = ">=3.13"
 dependencies = [
     "a2a-sdk==0.3.25",
     "google-cloud-aiplatform[adk,agent-engines]>=1.128.0",
-    "a2ui-agent-sdk @ file://./libs/a2ui-agent-sdk",
+    "a2ui-agent-sdk==0.1.2",
 ]
-[tool.uv]
-override-dependencies = [
-    "google-cloud-aiplatform>=1.148.1",
-]
-[[tool.uv.index]]
-name = "ah-3p-staging-python"
-url = "https://us-python.pkg.dev/artifact-foundry-prod/ah-3p-staging-python/simple"
