@@ -57,6 +57,12 @@ json_format.MessageToDict = new_MessageToDict
 
 import os
 import subprocess
+import sys
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
+if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
+    sys.path.insert(0, sdk_src_path)
 
 from a2a.types import AgentSkill
 from agent import SamsungAgent
