@@ -13,6 +13,14 @@
 # limitations under the License.
 
 
+import os
+import sys
+
+project_root = os.path.dirname(os.path.abspath(__file__))
+sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
+if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
+    sys.path.insert(0, sdk_src_path)
+
 from a2a.server.agent_execution import AgentExecutor, RequestContext
 from a2a.server.events import EventQueue
 from a2a.server.tasks import TaskUpdater
@@ -30,7 +38,7 @@ from a2a.utils import (
 )
 from a2a.utils.errors import ServerError
 from a2ui.a2a import try_activate_a2ui_extension
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.schema.constants import VERSION_0_8
 from agent import SamsungAgent
 from state_manager import GLOBAL_SESSIONS
 
