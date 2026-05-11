@@ -284,6 +284,7 @@ def main():
           "pydantic",
           "jsonschema>=4.0.0",
           "google-cloud-firestore",
+          "protobuf==4.25.3",
       ],
       "http_options": {
           "api_version": "v1beta1",
