@@ -12,17 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-[project]
-name = "a2ui-contactcard-agentengine"
-version = "0.1.0"
-description = "Sample Google ADK-based Contact Lookup agent that uses a2ui extension and is hosted as an A2A agent on Agent Engine."
-readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [    
-    "google-cloud-aiplatform[adk,agent-engines]>=1.128.0",
-    
-    # a2ui와 a2a가 내부적으로 사용하는 공개 패키지들 추가
-    "google-adk>=1.28.1",
-    "google-genai>=1.27.0",
-    "jsonschema>=4.0.0",
-]
+# File-based dynamic versioning
+# - The next release version
+# - Version format: major.minor.patch
+# - Update the version in this file before releasing
+#
+# TODO:
+#   Switch to VCS-based versioning which derives version
+#   from Git tags automatically with the hatch-vcs plugin
+#   when we start using Git tags.
+__version__ = "0.2.2"

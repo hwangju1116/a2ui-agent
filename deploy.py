@@ -169,30 +169,27 @@ def main():
 
   project_id = os.environ.get("PROJECT_ID")
   location = os.environ.get("LOCATION")
-  # STORAGE_BUCKET starts with gs://
   storage = os.environ.get("STORAGE_BUCKET")
   app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
   api_endpoint = f"{location}-aiplatform.googleapis.com"
-
-  if storage:
-      print(f"Checking if storage bucket exists: {storage}")
-      try:
-          subprocess.run(["gcloud", "storage", "buckets", "describe", f"gs://{storage}"], check=True, capture_output=True)
-          print(f"✓ Bucket {storage} exists.")
-      except subprocess.CalledProcessError:
-          print(f"Bucket {storage} does not exist. Creating it...")
-          try:
-              subprocess.run(["gcloud", "storage", "buckets", "create", f"gs://{storage}", f"--location={location}"], check=True)
-              print(f"✓ Bucket {storage} created successfully.")
-          except subprocess.CalledProcessError as e:
-              print(f"❌ Failed to create bucket: {e}")
-              raise e
-
-  print("≈" * 120)
-
+  
   staging_bucket = storage
   if storage and not storage.startswith("gs://"):
       staging_bucket = f"gs://{storage}"
+
+  if storage:
+      print(f"Checking if storage bucket exists: {staging_bucket}")
+      try:
+          subprocess.run(["gcloud", "storage", "buckets", "describe", staging_bucket], check=True, capture_output=True)
+          print(f"✓ Bucket {staging_bucket} exists.")
+      except subprocess.CalledProcessError:
+          print(f"Bucket {staging_bucket} does not exist. Creating it...")
+          try:
+              subprocess.run(["gcloud", "storage", "buckets", "create", staging_bucket, f"--location={location}"], check=True)
+              print(f"✓ Bucket {staging_bucket} created successfully.")
+          except subprocess.CalledProcessError as e:
+              print(f"❌ Failed to create bucket: {e}")
+              raise e
 
   vertexai.init(
       project=project_id,
