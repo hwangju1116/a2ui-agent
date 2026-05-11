@@ -279,6 +279,7 @@ def main():
           "google-genai>=1.27.0",
           "python-dotenv>=1.1.0",
           "uvicorn",
+          "a2a-sdk",
           "cloudpickle>=3.1.2",
           "pydantic",
           "jsonschema>=4.0.0",
