@@ -47,6 +47,18 @@ def new_MessageToJson(message, *args, **kwargs):
 
 json_format.MessageToJson = new_MessageToJson
 
+old_MessageToDict = json_format.MessageToDict
+
+def new_MessageToDict(message, *args, **kwargs):
+    if isinstance(message, pydantic.BaseModel):
+        if hasattr(message, "model_dump"):
+            return message.model_dump()
+        else:
+            return message.dict()
+    return old_MessageToDict(message, *args, **kwargs)
+
+json_format.MessageToDict = new_MessageToDict
+
 
 def _get_bearer_token():
   """Gets a bearer token for authenticating with Google Cloud."""
