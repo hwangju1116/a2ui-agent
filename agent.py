@@ -41,8 +41,8 @@ import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.artifacts import InMemoryArtifactService
-from google.adk.memory import VertexAiMemoryBankService
-from google.adk.sessions import VertexAiSessionService
+from google.adk.memory.in_memory_memory_service import InMemoryMemoryService
+from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.genai import types
 import jsonschema
@@ -159,8 +159,8 @@ class SamsungAgent:
         app_name=self._agent_name,
         agent=agent,
         artifact_service=InMemoryArtifactService(),
-        session_service=VertexAiSessionService(project=project_id, location=location, agent_engine_id=engine_id),
-        memory_service=VertexAiMemoryBankService(project=project_id, location=location, agent_engine_id=engine_id),
+        session_service=InMemorySessionService(),
+        memory_service=InMemoryMemoryService(),
     )
 
   def get_processing_message(self) -> str:
@@ -182,9 +182,10 @@ class SamsungAgent:
         else get_text_prompt()
     )
 
-    os.environ["GOOGLE_CLOUD_LOCATION"] = os.environ.get("LOCATION", "us-central1")
+    os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
+    os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
     return LlmAgent(
-        model=os.getenv("MODEL", "gemini-3.1-pro-preview"),
+        model=os.getenv("MODEL", "gemini-3.1-flash-lite-preview"),
         name=self._agent_name,
         description="An agent that compares Samsung products.",
         instruction=instruction,
