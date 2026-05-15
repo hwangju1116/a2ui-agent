@@ -12,15 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-
-project_root = os.path.dirname(os.path.abspath(__file__))
-sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
-if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
-    sys.path.insert(0, sdk_src_path)
-
-from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG
+from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG
 
 ROLE_DESCRIPTION = (
     "You are a helpful Samsung product comparison assistant. Your goal is to guide the user through selecting a category, listing products, and comparing them."

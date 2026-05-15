@@ -16,12 +16,6 @@ import json
 import os
 import logging
 from typing import Dict, Optional
-import sys
-
-project_root = os.path.dirname(os.path.abspath(__file__))
-sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
-if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
-    sys.path.insert(0, sdk_src_path)
 
 from a2a.types import (
     AgentCapabilities,
@@ -30,13 +24,13 @@ from a2a.types import (
     Part,
     TextPart,
 )
-from a2ui.a2a.extension import get_a2ui_agent_extension
-from a2ui.a2a.parts import parse_response_to_parts
+from a2ui.a2a import get_a2ui_agent_extension
+from a2ui.a2a import parse_response_to_parts
 from a2ui.basic_catalog.provider import BasicCatalog
-from a2ui.parser.parser import parse_response
-from a2ui.schema.common_modifiers import remove_strict_validation
-from a2ui.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
-from a2ui.schema.manager import A2uiSchemaManager
+from a2ui.core.parser.parser import parse_response
+from a2ui.core.schema.common_modifiers import remove_strict_validation
+from a2ui.core.schema.constants import A2UI_CLOSE_TAG, A2UI_OPEN_TAG, VERSION_0_8
+from a2ui.core.schema.manager import A2uiSchemaManager
 import dotenv
 from google.adk.agents import run_config
 from google.adk.agents.llm_agent import LlmAgent
@@ -185,7 +179,7 @@ class SamsungAgent:
     os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
     os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
     return LlmAgent(
-        model=os.getenv("MODEL", "gemini-3.1-flash-lite-preview"),
+        model=os.getenv("MODEL", "gemini-3.1-pro-preview"),
         name=self._agent_name,
         description="An agent that compares Samsung products.",
         instruction=instruction,

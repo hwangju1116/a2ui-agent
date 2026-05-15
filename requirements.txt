@@ -1,9 +1,0 @@
-a2a-sdk
-a2ui-agent-sdk
-google-cloud-aiplatform[adk,agent-engines]==1.128.0
-google-genai
-google-auth
-google-auth-httplib2
-google-api-python-client
-python-dotenv
-uvicorn[standard]
