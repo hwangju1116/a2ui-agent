@@ -184,6 +184,15 @@ class SamsungAgent:
         description="An agent that compares Samsung products.",
         instruction=instruction,
         tools=[get_categories, get_products_by_category, get_product_details, compare_products, save_selection],
+        generate_content_config=types.GenerateContentConfig(
+          http_options=types.HttpOptions(
+            retry_options=types.HttpRetryOptions(
+              attempts=5,
+              initial_delay=1.0,
+              max_delay=5.0
+            )
+          )
+        )
     )
 
   async def fetch_response(
