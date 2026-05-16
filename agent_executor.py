@@ -31,7 +31,6 @@ from a2a.utils.errors import ServerError
 from a2ui.a2a import try_activate_a2ui_extension
 from a2ui.core.schema.constants import VERSION_0_8
 from agent import SamsungAgent
-from state_manager import GLOBAL_SESSIONS
 
 
 class SamsungAgentExecutor(AgentExecutor):

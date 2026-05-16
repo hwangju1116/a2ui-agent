@@ -293,7 +293,6 @@ def main():
           "sample_samsung.json",
           "agent.py",
           "tools.py",
-          "state_manager.py",
           "examples",
       ],
       "env_vars": {

@@ -1,8 +1,8 @@
 [
   {
     "beginRendering": {
-      "surfaceId": "action-modal",
-      "root": "modal-wrapper",
+      "surfaceId": "confirm-modal",
+      "root": "main-column",
       "styles": {
         "primaryColor": "#0C4DA2",
         "font": "Roboto"
@@ -11,27 +11,8 @@
   },
   {
     "surfaceUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "confirm-modal",
       "components": [
-        {
-          "id": "modal-wrapper",
-          "component": {
-            "Modal": {
-              "entryPointChild": "hidden-entry-point",
-              "contentChild": "main-column"
-            }
-          }
-        },
-        {
-          "id": "hidden-entry-point",
-          "component": {
-            "Text": {
-              "text": {
-                "literalString": ""
-              }
-            }
-          }
-        },
         {
           "id": "main-column",
           "component": {
@@ -214,7 +195,7 @@
   },
   {
     "dataModelUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "confirm-modal",
       "path": "/",
       "contents": [
         {

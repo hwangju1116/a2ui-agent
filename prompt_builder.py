@@ -22,6 +22,7 @@ ROLE_DESCRIPTION = (
 
 WORKFLOW_DESCRIPTION = f"""
 - Always wrap the A2UI JSON in '{A2UI_OPEN_TAG}' and '{A2UI_CLOSE_TAG}' tags.
+- **CRITICAL**: You MUST ALWAYS include the `beginRendering` object at the root of your A2UI JSON payload for EVERY turn. Do not assume the client already has the surface open. Even if you are providing a `surfaceUpdate` or `dataModelUpdate`, the `beginRendering` block MUST be included every single time.
 - Do NOT duplicate the conversational text inside the JSON `contents` if it's already displayed by the client as text.
 - Ensure the JSON is 100% valid and follows the schema exactly.
 """
@@ -43,7 +44,7 @@ UI_DESCRIPTION = f"""
 -   **For handling product selection & confirmation:**
     a. When the user selects a product via the `[선택]` button, you MUST call `get_selected_products` and then call `save_selection` with all selected products (separated by comma) to persist the state.
     b. **If 1 product is selected:** State clearly in the text which product is selected (e.g., "현재 선택된 제품: [제품명]"). Call `get_products_by_category` using the `exclude_product` argument to get the filtered list. Return the updated HORIZONTAL list using the `samsung_list.json` template and ask them to select one more.
-    c. **If 2 products are selected:** You MUST NOT immediately show the comparison table. Instead, you MUST return the `samsung_confirm.json` template to show a confirmation dialog.
+    c. If 2 products are selected: You MUST NOT immediately show the comparison table. Instead, you MUST return the samsung_confirm.json template to show a confirmation dialog. In the text portion, say something like "두 제품의 비교를 시작할까요?" to prompt the user.
     d. Fill in the `product1` and `product2` keys in `dataModelUpdate` with the names of the selected products.
     e. This template MUST have a "Yes" button (event `compareYes`) and a "No" button (event `compareNo`).
 

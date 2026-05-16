@@ -41,7 +41,7 @@ from google.adk.runners import Runner
 from google.genai import types
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
-from tools import get_categories, get_products_by_category, get_product_details, compare_products, save_selection
+from tools import get_categories, get_products_by_category, compare_products, save_selection, get_selected_products
 
 SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
@@ -183,7 +183,7 @@ class SamsungAgent:
         name=self._agent_name,
         description="An agent that compares Samsung products.",
         instruction=instruction,
-        tools=[get_categories, get_products_by_category, get_product_details, compare_products, save_selection],
+        tools=[get_categories, get_products_by_category, compare_products, save_selection, get_selected_products],
         generate_content_config=types.GenerateContentConfig(
           http_options=types.HttpOptions(
             retry_options=types.HttpRetryOptions(
