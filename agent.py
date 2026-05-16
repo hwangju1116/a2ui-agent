@@ -179,7 +179,7 @@ class SamsungAgent:
     os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
     os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
     return LlmAgent(
-        model=os.getenv("MODEL", "gemini-3.1-pro-preview"),
+        model=os.getenv("MODEL", "gemini-3.1-flash-lite"),
         name=self._agent_name,
         description="An agent that compares Samsung products.",
         instruction=instruction,

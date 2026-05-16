@@ -1,18 +1,16 @@
 [
   {
-    "version": "v0.8",
-    "createSurface": {
+    "beginRendering": {
       "surfaceId": "action-modal",
-      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
-      "theme": {
+      "root": "root",
+      "styles": {
         "primaryColor": "#0C4DA2",
         "font": "Roboto"
       }
     }
   },
   {
-    "version": "v0.8",
-    "updateComponents": {
+    "surfaceUpdate": {
       "surfaceId": "action-modal",
       "components": [
         {
@@ -20,7 +18,10 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": ["title-heading", "category-list"]
+                "explicitList": [
+                  "title-heading",
+                  "category-list"
+                ]
               }
             }
           }
@@ -30,7 +31,9 @@
           "component": {
             "Text": {
               "usageHint": "h3",
-              "text": { "path": "/title" }
+              "text": {
+                "path": "/title"
+              }
             }
           }
         },
@@ -62,10 +65,13 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": ["category-text", "select-button"]
+                "explicitList": [
+                  "category-text",
+                  "select-button"
+                ]
               },
-              "justify": "spaceBetween",
-              "align": "center"
+              "distribution": "spaceBetween",
+              "alignment": "center"
             }
           }
         },
@@ -73,8 +79,10 @@
           "id": "category-text",
           "component": {
             "Text": {
-              "usageHint": "body1",
-              "text": { "path": "/category" }
+              "usageHint": "body",
+              "text": {
+                "path": "/category"
+              }
             }
           }
         },
@@ -83,11 +91,17 @@
           "component": {
             "Button": {
               "child": "select-text",
+              "primary": true,
               "action": {
                 "name": "select_category",
-                "context": {
-                  "name": { "path": "/category" }
-                }
+                "context": [
+                  {
+                    "key": "name",
+                    "value": {
+                      "path": "/category"
+                    }
+                  }
+                ]
               }
             }
           }
@@ -96,7 +110,9 @@
           "id": "select-text",
           "component": {
             "Text": {
-              "text": "선택"
+              "text": {
+                "literalString": "선택"
+              }
             }
           }
         }
@@ -115,8 +131,24 @@
         {
           "key": "categories",
           "valueMap": [
-            { "key": "item1", "valueMap": [{ "key": "category", "valueString": "스마트폰" }] },
-            { "key": "item2", "valueMap": [{ "key": "category", "valueString": "태블릿" }] }
+            {
+              "key": "item1",
+              "valueMap": [
+                {
+                  "key": "category",
+                  "valueString": "스마트폰"
+                }
+              ]
+            },
+            {
+              "key": "item2",
+              "valueMap": [
+                {
+                  "key": "category",
+                  "valueString": "태블릿"
+                }
+              ]
+            }
           ]
         }
       ]

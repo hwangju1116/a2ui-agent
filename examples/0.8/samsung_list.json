@@ -1,18 +1,16 @@
 [
   {
-    "version": "v0.8",
-    "createSurface": {
+    "beginRendering": {
       "surfaceId": "action-modal",
-      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
-      "theme": {
+      "root": "root",
+      "styles": {
         "primaryColor": "#0C4DA2",
         "font": "Roboto"
       }
     }
   },
   {
-    "version": "v0.8",
-    "updateComponents": {
+    "surfaceUpdate": {
       "surfaceId": "action-modal",
       "components": [
         {
@@ -20,7 +18,10 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": ["title-heading", "item-list"]
+                "explicitList": [
+                  "title-heading",
+                  "item-list"
+                ]
               }
             }
           }
@@ -30,7 +31,9 @@
           "component": {
             "Text": {
               "usageHint": "h3",
-              "text": { "path": "/title" }
+              "text": {
+                "path": "/title"
+              }
             }
           }
         },
@@ -39,7 +42,7 @@
           "component": {
             "List": {
               "direction": "horizontal",
-              "align": "start",
+              "alignment": "start",
               "children": {
                 "template": {
                   "componentId": "item-card-template",
@@ -64,7 +67,10 @@
           "component": {
             "Column": {
               "children": {
-                "explicitList": ["card-image", "card-content"]
+                "explicitList": [
+                  "card-image",
+                  "card-content"
+                ]
               }
             }
           }
@@ -73,7 +79,9 @@
           "id": "card-image",
           "component": {
             "Image": {
-              "url": { "path": "/imageUrl" },
+              "url": {
+                "path": "/imageUrl"
+              },
               "fit": "contain",
               "width": 100,
               "height": 100
@@ -99,7 +107,9 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": ["prod-name"]
+                "explicitList": [
+                  "prod-name"
+                ]
               }
             }
           }
@@ -108,8 +118,10 @@
           "id": "prod-name",
           "component": {
             "Text": {
-              "usageHint": "body2",
-              "text": { "path": "/name" }
+              "usageHint": "body",
+              "text": {
+                "path": "/name"
+              }
             }
           }
         },
@@ -118,7 +130,9 @@
           "component": {
             "Text": {
               "usageHint": "caption",
-              "text": { "path": "/category" }
+              "text": {
+                "path": "/category"
+              }
             }
           }
         },
@@ -127,11 +141,17 @@
           "component": {
             "Button": {
               "child": "select-text",
+              "primary": true,
               "action": {
                 "name": "select_product",
-                "context": {
-                  "name": { "path": "/name" }
-                }
+                "context": [
+                  {
+                    "key": "name",
+                    "value": {
+                      "path": "/name"
+                    }
+                  }
+                ]
               }
             }
           }
@@ -140,7 +160,9 @@
           "id": "select-text",
           "component": {
             "Text": {
-              "text": "선택"
+              "text": {
+                "literalString": "선택"
+              }
             }
           }
         }
@@ -162,10 +184,22 @@
             {
               "key": "item1",
               "valueMap": [
-                { "key": "name", "valueString": "Galaxy S24" },
-                { "key": "category", "valueString": "스마트폰" },
-                { "key": "imageUrl", "valueString": "https://picsum.photos/100/100?random=1" },
-                { "key": "selected", "valueBoolean": false }
+                {
+                  "key": "name",
+                  "valueString": "Galaxy S24"
+                },
+                {
+                  "key": "category",
+                  "valueString": "스마트폰"
+                },
+                {
+                  "key": "imageUrl",
+                  "valueString": "https://picsum.photos/100/100?random=1"
+                },
+                {
+                  "key": "selected",
+                  "valueBoolean": false
+                }
               ]
             }
           ]

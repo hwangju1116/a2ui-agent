@@ -301,7 +301,7 @@ def main():
           "PROJECT_ID": project_id,
           "LOCATION": location,
           "GOOGLE_GENAI_USE_VERTEXAI": "TRUE",
-          "MODEL": "gemini-3.1-pro-preview"
+          "MODEL": "gemini-3.1-flash-lite"
       },
   }
 
