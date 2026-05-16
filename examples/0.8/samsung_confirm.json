@@ -1,28 +1,18 @@
 [
   {
-    "version": "v0.8",
-    "createSurface": {
-      "surfaceId": "action-modal",
-      "catalogId": "https://a2ui.org/specification/v0_8/basic_catalog.json",
-      "theme": {
+    "beginRendering": {
+      "surfaceId": "confirm-modal",
+      "root": "main-column",
+      "styles": {
         "primaryColor": "#0C4DA2",
         "font": "Roboto"
       }
     }
   },
   {
-    "version": "v0.8",
-    "updateComponents": {
-      "surfaceId": "action-modal",
+    "surfaceUpdate": {
+      "surfaceId": "confirm-modal",
       "components": [
-        {
-          "id": "root",
-          "component": {
-            "Card": {
-              "child": "main-column"
-            }
-          }
-        },
         {
           "id": "main-column",
           "component": {
@@ -35,8 +25,8 @@
                   "buttons-row"
                 ]
               },
-              "align": "center",
-              "justify": "center"
+              "alignment": "center",
+              "distribution": "center"
             }
           }
         },
@@ -45,10 +35,13 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": ["header-icon", "header-text"]
+                "explicitList": [
+                  "header-icon",
+                  "header-text"
+                ]
               },
-              "align": "center",
-              "justify": "center"
+              "alignment": "center",
+              "distribution": "center"
             }
           }
         },
@@ -56,7 +49,9 @@
           "id": "header-icon",
           "component": {
             "Icon": {
-              "name": "compare_arrows"
+              "name": {
+                "literalString": "info"
+              }
             }
           }
         },
@@ -64,8 +59,10 @@
           "id": "header-text",
           "component": {
             "Text": {
-              "text": "제품 비교",
-              "usageHint": "h3"
+              "usageHint": "h3",
+              "text": {
+                "literalString": "제품 비교"
+              }
             }
           }
         },
@@ -74,10 +71,14 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": ["product-1-name", "vs-text", "product-2-name"]
+                "explicitList": [
+                  "product-1-name",
+                  "vs-text",
+                  "product-2-name"
+                ]
               },
-              "align": "center",
-              "justify": "center"
+              "alignment": "center",
+              "distribution": "center"
             }
           }
         },
@@ -86,8 +87,10 @@
           "weight": 2,
           "component": {
             "Text": {
-              "text": { "path": "/product1" },
-              "usageHint": "h4"
+              "usageHint": "h4",
+              "text": {
+                "path": "/product1"
+              }
             }
           }
         },
@@ -96,9 +99,11 @@
           "weight": 1,
           "component": {
             "Text": {
-              "text": "vs",
               "usageHint": "body",
-              "align": "center"
+              "alignment": "center",
+              "text": {
+                "literalString": "vs"
+              }
             }
           }
         },
@@ -107,8 +112,10 @@
           "weight": 2,
           "component": {
             "Text": {
-              "text": { "path": "/product2" },
-              "usageHint": "h4"
+              "usageHint": "h4",
+              "text": {
+                "path": "/product2"
+              }
             }
           }
         },
@@ -117,9 +124,11 @@
           "weight": 1,
           "component": {
             "Text": {
-              "text": "비교하시겠습니까?",
               "usageHint": "body",
-              "align": "center"
+              "alignment": "center",
+              "text": {
+                "literalString": "비교하시겠습니까?"
+              }
             }
           }
         },
@@ -128,10 +137,13 @@
           "component": {
             "Row": {
               "children": {
-                "explicitList": ["yes-button", "no-button"]
+                "explicitList": [
+                  "yes-button",
+                  "no-button"
+                ]
               },
-              "justify": "spaceEvenly",
-              "align": "center"
+              "distribution": "spaceEvenly",
+              "alignment": "center"
             }
           }
         },
@@ -139,7 +151,9 @@
           "id": "yes-button-text",
           "component": {
             "Text": {
-              "text": "Yes"
+              "text": {
+                "literalString": "Yes"
+              }
             }
           }
         },
@@ -148,11 +162,9 @@
           "component": {
             "Button": {
               "child": "yes-button-text",
-              "variant": "primary",
+              "primary": true,
               "action": {
-                "event": {
-                  "name": "compareYes"
-                }
+                "name": "compareYes"
               }
             }
           }
@@ -161,7 +173,9 @@
           "id": "no-button-text",
           "component": {
             "Text": {
-              "text": "No"
+              "text": {
+                "literalString": "No"
+              }
             }
           }
         },
@@ -170,11 +184,8 @@
           "component": {
             "Button": {
               "child": "no-button-text",
-              "variant": "default",
               "action": {
-                "event": {
-                  "name": "compareNo"
-                }
+                "name": "compareNo"
               }
             }
           }
@@ -184,7 +195,7 @@
   },
   {
     "dataModelUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "confirm-modal",
       "path": "/",
       "contents": [
         {

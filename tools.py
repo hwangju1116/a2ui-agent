@@ -18,7 +18,6 @@ import logging
 import os
 
 from google.adk.tools.tool_context import ToolContext
-from state_manager import GLOBAL_SESSIONS
 
 logger = logging.getLogger(__name__)
 
@@ -67,16 +66,11 @@ def get_categories(tool_context: ToolContext) -> str:
 
 def get_products_by_category(category_id: str, tool_context: ToolContext, exclude_product: str = None) -> str:
     """Returns a list of products in a given category ID (e.g., 'smartphones'). Option to exclude one product."""
-    from state_manager import session_context
-    session_id = getattr(session_context, "id", None)
-    
     logger.info(f"--- TOOL CALLED: get_products_by_category (Category ID: {category_id}, Exclude: {exclude_product}) ---")
     
-    if session_id:
-        if session_id not in GLOBAL_SESSIONS:
-            GLOBAL_SESSIONS[session_id] = {}
-        GLOBAL_SESSIONS[session_id]["current_category"] = category_id
-        logger.info(f"Updated current_category in GLOBAL_SESSIONS for {session_id}: {category_id}")
+    # 전역 세션 딕셔너리 대신 tool_context에 직접 상태를 저장합니다.
+    setattr(tool_context, "current_category", category_id)
+    logger.info(f"Updated current_category in tool_context: {category_id}")
         
     products = PRODUCTS_DATA.get(category_id, [])
     
@@ -118,34 +112,19 @@ def compare_products(product_names_str: str, tool_context: ToolContext) -> str:
 
 def save_selection(product_names: str, tool_context: ToolContext, session_id: str = None) -> str:
     """Saves selected products to session state for long-term memory. Provide product names separated by comma."""
-    if not session_id:
-        from state_manager import session_context
-        session_id = getattr(session_context, "id", None)
-    
-    logger.info(f"--- TOOL CALLED: save_selection (Session: {session_id}, Products: {product_names}) ---")
-    
-    if not session_id:
-        logger.error("No session_id found in context!")
-        return json.dumps({"success": False, "error": "No session_id"}, ensure_ascii=False)
+    logger.info(f"--- TOOL CALLED: save_selection (Products: {product_names}) ---")
         
     names = [n.strip() for n in product_names.split(",")]
     
-    if session_id not in GLOBAL_SESSIONS:
-        GLOBAL_SESSIONS[session_id] = {}
-        
-    GLOBAL_SESSIONS[session_id]["selected_products"] = names
-    logger.info(f"Updated state in GLOBAL_SESSIONS for {session_id}: {GLOBAL_SESSIONS[session_id]}")
+    # tool_context 객체에 선택한 상품 리스트를 속성으로 저장합니다.
+    setattr(tool_context, "selected_products", names)
+    logger.info(f"Updated selected_products in tool_context: {names}")
     
     return json.dumps({"success": True, "saved": names}, ensure_ascii=False)
 
 def get_selected_products(tool_context: ToolContext, session_id: str = None) -> str:
     """Returns the list of selected products for the current session."""
-    if not session_id:
-        from state_manager import session_context
-        session_id = getattr(session_context, "id", None)
+    # tool_context 객체에서 선택된 상품 리스트를 가져오며, 없을 경우 빈 리스트를 반환합니다.
+    selected_products = getattr(tool_context, "selected_products", [])
     
-    if not session_id:
-        return json.dumps([], ensure_ascii=False)
-        
-    state = GLOBAL_SESSIONS.get(session_id, {})
-    return json.dumps(state.get("selected_products", []), ensure_ascii=False)
+    return json.dumps(selected_products, ensure_ascii=False)

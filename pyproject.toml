@@ -25,9 +25,6 @@ dependencies = [
     "google-adk>=1.28.1",
     "google-genai>=1.27.0",
     "jsonschema>=4.0.0",
-    "a2ui-agent-sdk",
+    "a2ui-agent-sdk==0.1.2",
+    "a2a-sdk==0.3.25"
 ]
-
-[tool.uv.sources]
-a2ui-agent-sdk = { path = "libs/a2ui-agent-sdk" }
-

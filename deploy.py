@@ -59,11 +59,6 @@ import os
 import subprocess
 import sys
 
-project_root = os.path.dirname(os.path.abspath(__file__))
-sdk_src_path = os.path.join(project_root, "libs", "a2ui-agent-sdk", "src")
-if os.path.exists(sdk_src_path) and sdk_src_path not in sys.path:
-    sys.path.insert(0, sdk_src_path)
-
 import a2a
 import shutil
 from a2a.types import AgentSkill
@@ -174,12 +169,6 @@ def _register_agent_on_gemini_enterprise(
 
 
 def main():
-  a2a_path = os.path.dirname(a2a.__file__)
-  dest_path = os.path.join(os.path.dirname(__file__), "a2a")
-  if not os.path.exists(dest_path):
-      print(f"Copying a2a from {a2a_path} to {dest_path} for deployment...")
-      shutil.copytree(a2a_path, dest_path, dirs_exist_ok=True)
-
   project_id = os.environ.get("PROJECT_ID")
   location = os.environ.get("LOCATION")
   storage = os.environ.get("STORAGE_BUCKET")
@@ -290,6 +279,8 @@ def main():
           "pydantic",
           "jsonschema>=4.0.0",
           "google-cloud-firestore",
+          "a2ui-agent-sdk==0.1.2",
+          "a2a-sdk==0.3.25",
       ],
       "http_options": {
           "api_version": "v1beta1",
@@ -302,10 +293,7 @@ def main():
           "sample_samsung.json",
           "agent.py",
           "tools.py",
-          "state_manager.py",
           "examples",
-          "libs",
-          "a2a",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
