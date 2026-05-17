@@ -55,8 +55,7 @@
           "id": "category-item-template",
           "component": {
             "Card": {
-              "child": "category-layout",
-              "width": 80
+              "child": "category-layout"
             }
           }
         },
@@ -66,7 +65,7 @@
             "Row": {
               "children": {
                 "explicitList": [
-                  "category-text",
+                  "image-text-group",
                   "select-button"
                 ]
               },
@@ -76,10 +75,38 @@
           }
         },
         {
+          "id": "image-text-group",
+          "component": {
+            "Row": {
+              "children": {
+                "explicitList": [
+                  "category-image",
+                  "category-text"
+                ]
+              },
+              "distribution": "start",
+              "alignment": "center"
+            }
+          }
+        },
+        {
+          "id": "category-image",
+          "component": {
+            "Image": {
+              "url": {
+                "path": "/imageUrl"
+              },
+              "fit": "cover",
+              "width": 200,
+              "height": 200
+            }
+          }
+        },
+        {
           "id": "category-text",
           "component": {
             "Text": {
-              "usageHint": "body",
+              "usageHint": "h4",
               "text": {
                 "path": "/category"
               }
