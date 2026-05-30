@@ -14,72 +14,18 @@ This project implements a spec comparison agent for Samsung products using **Goo
 
 To allow the agent to communicate with Gemini Enterprise, you need to register an authorization with the `cloud-platform` scope.
 
-Run the following command, replacing placeholders with your values:
+Open `generate_auth.sh` and update 'CLIENT_ID' and 'CLIENT_SECRET' by referring created OAuth credentials.
+
+Run the deployment script:
 
 ```bash
-# ==========================================
-# Set env variables
-# ==========================================
-PROJECT_ID="YOUR_PROJECT_ID"
-CLIENT_ID="YOUR_CLIENT_ID"
-CLIENT_SECRET="YOUR_CLIENT_SECRET"
-YOUR_AUTH_ID="a2ui-tester"
-
-# ==========================================
-# Create Authorization
-# ==========================================
-curl -X POST \
-   -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-   -H "Content-Type: application/json" \
-   -H "X-Goog-User-Project: ${PROJECT_ID}" \
-   "https://global-discoveryengine.googleapis.com/v1alpha/projects/${PROJECT_ID}/locations/global/authorizations?authorizationId=${YOUR_AUTH_ID}" \
-   -d "{
-      \"name\": \"projects/${PROJECT_ID}/locations/global/authorizations/${YOUR_AUTH_ID}\",
-      \"serverSideOauth2\": {
-         \"clientId\": \"${CLIENT_ID}\",
-         \"clientSecret\": \"${CLIENT_SECRET}\",
-         \"authorizationUri\": \"https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fstatic%2Foauth%2Foauth.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&access_type=offline&prompt=consent\",
-         \"tokenUri\": \"https://oauth2.googleapis.com/token\"
-      }
-   }"
+chmod +x generate_auth.sh
+./generate_auth.sh
 ```
 
-You'll get a response like this:
+### 2. Set Environment Variable to deploy.py
 
-```
-{
-  "name": "projects/158958467566/locations/global/authorizations/a2ui-tester",
-  "serverSideOauth2": {
-    "clientId": "${CLIENT_ID}",
-    "clientSecret": "${CLIENT_SECRET}",
-    "tokenUri": "https://oauth2.googleapis.com/token",
-    "authorizationUri": "https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=https%3A%2F%2Fvertexaisearch.cloud.google.com%2Fstatic%2Foauth%2Foauth.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&access_type=offline&prompt=consent"
-  }
-}
-```
-
-Copy value of key 'name': projects/YOUR_PROJECT_NUMBER/locations/global/authorizations/a2ui-tester 
-
-Use this value to replace AGENT_AUTHORIZATION below.
-
-### 2. Environment Variables
-
-Create a `.env` file in the root directory and fill in the following required values:
-
-```env
-PROJECT_ID=your-google-cloud-project-id
-LOCATION=us-central1
-STORAGE_BUCKET=your-bucket-name
-GEMINI_ENTERPRISE_APP_ID=your-gemini-enterprise-app-id
-AGENT_AUTHORIZATION=projects/YOUR_PROJECT_NUMBER/locations/global/authorizations/YOUR_AUTH_ID
-```
-
--   **`PROJECT_ID`**: Your Google Cloud Project ID.
--   **`LOCATION`**: The region for Vertex AI (e.g., `us-central1`).
--   **`STORAGE_BUCKET`**: The GCS bucket name used for staging agent artifacts. If the bucket does not exist, `deploy.py` will attempt to create it automatically.
--   **`GEMINI_ENTERPRISE_APP_ID`**: The ID of your Gemini Enterprise App (Engine) where the agent will be registered.
--   **`AGENT_AUTHORIZATION`**: The resource path for OAuth authorization (needed if the agent calls external authenticated tools).
-
+Open `deploy.py` and update 'GEMINI_ENTERPRISE_APP_ID' to your Gemini Enterprise App ID.
 
 ### 3. Deploy to Agent Runtime
 

@@ -14,6 +14,8 @@
 
 """Main file for creating and managing A2UI agents on Agent Engine."""
 
+GEMINI_ENTERPRISE_APP_ID = "YOUR_APP_ID"
+
 import json
 from google.protobuf import json_format
 
@@ -177,7 +179,7 @@ def main():
   project_id = PROJECT_ID
   location = "us-central1"
   storage = f"{PROJECT_ID}-a2ui-bucket"
-  app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
+  app_id = GEMINI_ENTERPRISE_APP_ID
   authorization = f"projects/{project_number}/locations/global/authorizations/a2ui-sample"
   
   # Auto-generate bucket name if missing or default
