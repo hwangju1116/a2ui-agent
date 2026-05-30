@@ -10,6 +10,10 @@ This project implements a spec comparison agent for Samsung products using **Goo
 -   `uv` package manager
 -   Google Cloud SDK configured with your project
 
+```bash
+git clone https://github.com/hwangju1116/a2ui-agent
+```
+
 ### 1. Authorization (OAuth)
 
 To allow the agent to communicate with Gemini Enterprise, you need to register an authorization with the `cloud-platform` scope.
