@@ -20,6 +20,11 @@ To allow the agent to communicate with Gemini Enterprise, you need to register a
 
 Open `generate_auth.sh` and update 'CLIENT_ID' and 'CLIENT_SECRET' by referring created OAuth credentials.
 
+```bash
+CLIENT_ID="YOUR_CLIENT_ID"
+CLIENT_SECRET="YOUR_CLIENT_SECRET"
+```
+
 Run the deployment script:
 
 ```bash
@@ -30,6 +35,10 @@ chmod +x generate_auth.sh
 ### 2. Set Environment Variable to deploy.py
 
 Open `deploy.py` and update 'GEMINI_ENTERPRISE_APP_ID' to your Gemini Enterprise App ID.
+
+```bash
+GEMINI_ENTERPRISE_APP_ID = "YOUR_APP_ID"
+```
 
 ### 3. Deploy to Agent Runtime
 
