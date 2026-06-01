@@ -28,6 +28,7 @@ CLIENT_SECRET="YOUR_CLIENT_SECRET"
 Run the deployment script:
 
 ```bash
+cd a2ui-agent
 chmod +x generate_auth.sh
 ./generate_auth.sh
 ```
