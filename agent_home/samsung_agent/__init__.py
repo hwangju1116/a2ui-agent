@@ -1,1 +1,0 @@
-# Initializer for proxy agent

@@ -14,6 +14,8 @@
 
 """Main file for creating and managing A2UI agents on Agent Engine."""
 
+GEMINI_ENTERPRISE_APP_ID = "YOUR_APP_ID"
+
 import json
 from google.protobuf import json_format
 
@@ -167,11 +169,18 @@ def _register_agent_on_gemini_enterprise(
   print(f"Response: {response.text}")
   response.raise_for_status()
 
-
+import google.auth
+from google.cloud import resourcemanager_v3
 def main():
-  project_id = os.environ.get("PROJECT_ID")
-  location = os.environ.get("LOCATION")
-  storage = os.environ.get("STORAGE_BUCKET")
+  credentials, PROJECT_ID = google.auth.default()
+  client = resourcemanager_v3.ProjectsClient(credentials=credentials)
+  project_info = client.get_project(name=f"projects/{PROJECT_ID}")
+  project_number = project_info.name.split("/")[-1]
+  project_id = PROJECT_ID
+  location = "us-central1"
+  storage = f"{PROJECT_ID}-a2ui-bucket"
+  app_id = GEMINI_ENTERPRISE_APP_ID
+  authorization = f"projects/{project_number}/locations/global/authorizations/a2ui-sample"
   
   # Auto-generate bucket name if missing or default
   if not storage or storage == "a2ui-bucket" or storage == "gs://a2ui-bucket":
@@ -191,7 +200,6 @@ def main():
       # Also update environment variable for current run
       os.environ["STORAGE_BUCKET"] = storage
       
-  app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
   api_endpoint = f"{location}-aiplatform.googleapis.com"
   
   staging_bucket = storage
@@ -347,7 +355,7 @@ def main():
       agent_name="a2ui_samsung_device_agent",
       display_name="A2UI Samsung Device Agent",
       description="A helpful assistant agent that uses A2UI to render Samsung product comparisons.",
-      agent_authorization=os.environ.get("AGENT_AUTHORIZATION"),
+      agent_authorization=authorization,
   )
 
   print(enterprise_agent)
