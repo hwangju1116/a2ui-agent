@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """Main file for creating and managing A2UI agents on Agent Engine."""
+GEMINI_ENTERPRISE_APP_ID = "[본인의_GEMINI_ENTERPRISE_APP_ID]"
 
 
 import json
