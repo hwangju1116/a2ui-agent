@@ -308,7 +308,7 @@ def main():
           "PROJECT_ID": project_id,
           "LOCATION": location,
           "GOOGLE_GENAI_USE_VERTEXAI": "TRUE",
-          "MODEL": os.environ.get("MODEL", "gemini-3.1-flash-lite")
+          "MODEL": os.environ.get("MODEL", "gemini-3.1-pro-preview")
       },
   }
 

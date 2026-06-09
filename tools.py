@@ -124,7 +124,7 @@ async def search_latest_products(category_name: str, tool_context: ToolContext, 
     
     try:
         response = client.models.generate_content(
-            model=os.environ.get("MODEL", "gemini-2.5-flash"),
+            model=os.environ.get("MODEL", "gemini-3.1-pro-preview"),
             contents=prompt,
             config=types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())]
@@ -170,7 +170,7 @@ async def compare_products(product_names_str: str, tool_context: ToolContext) ->
     """
     try:
         response = client.models.generate_content(
-            model=os.environ.get("MODEL", "gemini-2.5-flash"),
+            model=os.environ.get("MODEL", "gemini-3.1-pro-preview"),
             contents=prompt,
             config=types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())]
