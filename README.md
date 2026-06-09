@@ -1,81 +1,106 @@
-# Samsung Device Spec Comparison Agent
+# Universal Product Spec Comparison Agent (A2UI)
 
-This project implements a spec comparison agent for Samsung products using **Google ADK** and **A2UI**, designed to be deployed on **Agent Runtime** and integrated with **Gemini Enterprise**.
+This project implements a brand-agnostic product search, details lookup, and specification comparison agent using **Google ADK** and **A2UI**. It is designed to be deployed on **Vertex AI Reasoning Engine** (Agent Engine) and seamlessly integrated with **Gemini Enterprise**.
 
-## Setup and Deployment
+Instead of relying on static mock data, this agent dynamically leverages **Google Search Grounding** to fetch real-time, accurate specifications and verified official URLs for products in any category (e.g., smartphones, laptops, TVs, home appliances).
+
+---
+
+## Features
+
+-   **Dynamic Web Search (Google Search Grounding)**: Dynamically searches the web to find the latest 2025/2026 models, specs, and prices for any product category.
+-   **Link Grounding (No 404s)**: Strictly validates and extracts only official, verified product URLs. If a verified link isn't found, it safely excludes "Buy Now" links from the comparison table to prevent broken 404 links.
+-   **Rich UI Interactions**: Uses A2UI (Agent-to-User Interface) to render:
+    -   **Category List**: A compact, vertical card list (strictly constrained to 80px height for optimal screen space).
+    -   **Product List**: A clean, horizontal carousel with fixed `200x200 px` square cards.
+    -   **Comparison Table**: A detailed, structured markdown table comparing key specifications (Processor, Display, Camera, Battery, Memory/Storage, Price, and Links).
+-   **Independent Surfaces**: Renders categories and product lists on separate, dedicated UI surfaces (`category-modal` and `product-modal`) so that the conversation history flows naturally without overwriting previous selections.
+-   **Dynamic Model Configuration**: Easily switch underlying Gemini models (e.g., `gemini-3.5-flash`, `gemini-3.1-pro-preview`) via environment variables.
+
+---
+
+## Setup and Configuration
 
 ### Prerequisites
 
 -   Python 3.10+
--   `uv` package manager
--   Google Cloud SDK configured with your project
+-   `uv` package manager (recommended)
+-   Google Cloud SDK configured with your active billing project
+-   Authorized credentials with Google Cloud (`gcloud auth login`, `gcloud auth application-default login`)
 
-```bash
-git clone https://github.com/hwangju1116/a2ui-agent
+### 1. Environment Variables (`.env`)
+
+Create a `.env` file in the root directory and configure your project and model settings. **Never commit this file to version control.**
+
+```env
+PROJECT_ID="your-google-cloud-project-id"
+LOCATION="us-central1"
+AGENT_AUTHORIZATION="product_oauth_v1"
+MODEL="gemini-3.5-flash"
 ```
 
-### 1. Authorization (OAuth)
+-   `PROJECT_ID`: Your Google Cloud Project ID.
+-   `LOCATION`: Google Cloud region (default is `us-central1`).
+-   `AGENT_AUTHORIZATION`: The ID of the OAuth Authorization resource registered in Gemini Enterprise.
+-   `MODEL`: The Gemini model to use for the agent and tools (e.g., `gemini-3.5-flash` for fast, cost-effective reasoning).
 
-To allow the agent to communicate with Gemini Enterprise, you need to register an authorization with the `cloud-platform` scope.
+### 2. Register OAuth Authorization
 
-Open `generate_auth.sh` and update 'CLIENT_ID' and 'CLIENT_SECRET' by referring created OAuth credentials.
+To allow the agent to securely communicate with Gemini Enterprise, you must register an OAuth Authorization resource.
 
-```bash
-CLIENT_ID="YOUR_CLIENT_ID"
-CLIENT_SECRET="YOUR_CLIENT_SECRET"
-```
-
-Run the deployment script:
+We provide a template script `generate_auth.sh` (with secrets removed). Copy the template, fill in your OAuth Client credentials, and run it:
 
 ```bash
-cd a2ui-agent
-chmod +x generate_auth.sh
+# Edit generate_auth.sh with your Client ID & Secret (do NOT commit these changes!)
 ./generate_auth.sh
 ```
 
-### 2. Set Environment Variable to deploy.py
+---
 
-Open `deploy.py` and update 'GEMINI_ENTERPRISE_APP_ID' to your Gemini Enterprise App ID.
+## Local Development & Testing
 
-```bash
-GEMINI_ENTERPRISE_APP_ID = "YOUR_APP_ID"
-```
+We provide a `Makefile` with shortcut commands to simplify development:
 
-### 3. Deploy to Agent Runtime
+### Run the Agent Locally
 
-Run the deployment script:
+You can test the agent's reasoning and A2UI JSON payload generation locally before deploying it to Google Cloud:
 
 ```bash
-uv run deploy.py
+make run
 ```
 
-This will output the `REASONING_ENGINE_ID`. Update your Web UI configuration or environment with this ID.
+This executes `test_locally.py` in UI mode, simulating a two-turn conversation (greeting ➔ category selection) and printing the exact generated A2UI JSON to the console for inspection.
 
-## Features
+---
 
--   **Rich UI Interactions**: Uses A2UI to render product categories as vertical lists and product lists as horizontal carousels.
--   **Spec Comparison**: Compares specifications of selected products and presents them in a table format.
--   **State Management**: Simulates session history and maintains state across turns in a hybrid approach.
+## Deployment to Vertex AI
+
+Once local testing is successful, deploy the agent to the cloud:
+
+```bash
+make deploy
+```
+
+### What `make deploy` does under the hood:
+1.  **Packages Code**: Bundles the local Python files (`agent.py`, `agent_executor.py`, `tools.py`, `prompt_builder.py`) and the A2UI templates in the `examples/` folder.
+2.  **Deploys to Vertex AI**: Registers the agent as a **Vertex AI Reasoning Engine** and uploads it to Google Cloud.
+3.  **Registers on Gemini Enterprise**: Automatically registers/updates the agent on your Gemini Enterprise App instance, binding it to the configured OAuth Authorization.
+
+---
 
 ## Project Structure
 
--   `agent.py`: Core agent definition using Google ADK. Defines the tools and response handling.
--   `agent_executor.py`: Wrapper to intercept queries and manage session state for conversational context.
--   `tools.py`: Python functions exposed as tools to the agent (e.g., loading products, comparing specs).
--   `prompt_builder.py`: Constructs the system prompt for the model, guiding it on how to use A2UI templates.
--   `a2ui_utils.py`: Utility functions for handling A2UI interactions and parsing.
--   `state_manager.py`: Simple state management simulation (currently minimal).
--   `deploy.py`: Automation script to deploy the agent to Vertex AI Reasoning Engine and register it on Gemini Enterprise.
--   `examples/`: Directory containing JSON templates for A2UI components (Category List, Product List, Confirmation Dialog).
--   `sample_samsung.json`: Data file containing mock Samsung product specifications for comparison.
+-   [agent.py](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/agent.py): Core agent definition using Google ADK. Orchestrates prompts and tools.
+-   [agent_executor.py](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/agent_executor.py): Intercepts user queries, manages conversation history, and handles A2UI state transitions.
+-   [tools.py](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/tools.py): Python tools exposed to the model, including Google Search Grounding for live product specs and comparison generation.
+-   [prompt_builder.py](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/prompt_builder.py): Constructs the system instructions, strictly enforcing UI layout dimensions (80px category cards, 200x200px product cards) and link grounding rules.
+-   [examples/0.8/](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/examples/0.8/): Contains A2UI JSON schema templates used by the model to render UI components:
+    -   `product_category_list.json`: Template for the compact vertical category list.
+    -   `product_list.json`: Template for the horizontal product carousel.
+    -   `product_confirm.json`: Template for the product selection confirmation dialog.
+-   [test_locally.py](file:///Users/hwangju/.gemini/jetski/scratch/a2ui-agent/test_locally.py): Local simulation script to verify multi-turn A2UI flows.
 
-## What `deploy.py` Does
-
-The `deploy.py` script automates the following steps:
-1.  **Pre-check**: Verifies if the specified Google Cloud Storage bucket exists, and creates it if missing.
-2.  **Package & Deploy**: Packages the local Python code and deploys it as a **Vertex AI Reasoning Engine** (Agent Engine).
-3.  **Fetch Agent Card**: Calls the A2A endpoint of the deployed engine to fetch the generated `AgentCard` (skills definition).
-4.  **Register on Gemini Enterprise**: Registers (or updates) the agent in the specified Gemini Enterprise App using the fetched Agent Card and provided Authorization resource.
+---
 
 ## License
 
