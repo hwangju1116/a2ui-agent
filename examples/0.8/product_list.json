@@ -1,7 +1,7 @@
 [
   {
     "beginRendering": {
-      "surfaceId": "action-modal",
+      "surfaceId": "product-modal",
       "root": "root",
       "styles": {
         "primaryColor": "#0C4DA2",
@@ -11,7 +11,7 @@
   },
   {
     "surfaceUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "product-modal",
       "components": [
         {
           "id": "root",
@@ -171,12 +171,12 @@
   },
   {
     "dataModelUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "product-modal",
       "path": "/",
       "contents": [
         {
           "key": "title",
-          "valueString": "Samsung Products"
+          "valueString": "Products"
         },
         {
           "key": "items",
@@ -186,7 +186,7 @@
               "valueMap": [
                 {
                   "key": "name",
-                  "valueString": "Galaxy S24"
+                  "valueString": "iPhone 16"
                 },
                 {
                   "key": "category",

@@ -41,19 +41,19 @@ from google.adk.runners import Runner
 from google.genai import types
 import jsonschema
 from prompt_builder import ROLE_DESCRIPTION, UI_DESCRIPTION, WORKFLOW_DESCRIPTION, get_text_prompt
-from tools import get_categories, get_products_by_category, compare_products, save_selection, get_selected_products
+from tools import get_categories, search_latest_products, compare_products, save_selection, get_selected_products
 
 SUPPORTED_CONTENT_TYPES = ["text", "text/plain"]
 
 dotenv.load_dotenv()
 logger = logging.getLogger(__name__)
 
-class SamsungAgent:
-  """An agent that compares Samsung products."""
+class ProductAgent:
+  """An agent that compares products."""
 
   def __init__(self, base_url: str):
     self.base_url = base_url
-    self._agent_name = "samsung_agent"
+    self._agent_name = "product_agent"
     self._user_id = "remote_agent"
     self._text_runner: Optional[Runner] = self._build_runner(self._build_llm_agent())
 
@@ -103,17 +103,17 @@ class SamsungAgent:
         extensions=extensions,
     )
     skill = AgentSkill(
-        id="samsung_comparison",
-        name="Samsung Comparison Tool",
-        description="Helps compare Samsung products.",
-        tags=["samsung", "comparison", "specs"],
-        examples=["Compare Galaxy S24 and S24+"],
+        id="product_comparison",
+        name="Product Comparison Tool",
+        description="Helps compare products.",
+        tags=["product", "comparison", "specs"],
+        examples=["Compare iPhone 16 and Galaxy S25"],
     )
 
     return AgentCard(
-        name="Samsung Agent",
+        name="Product Agent",
         description=(
-            "This agent helps compare Samsung products based on user criteria."
+            "This agent helps compare products based on user criteria."
         ),
         url=self.base_url,
         version="1.0.0",
@@ -140,11 +140,11 @@ class SamsungAgent:
         engine_id = "default_engine"
         try:
             engines = reasoning_engines.ReasoningEngine.list()
-            samsung_engines = [e for e in engines if e.display_name == "A2UI Samsung Agent on Agent Engine"]
+            product_engines = [e for e in engines if e.display_name == "A2UI Product Agent on Agent Engine"]
             
-            if samsung_engines:
+            if product_engines:
                 # Pick the first one (assuming list returns latest first or after cleanup only few left)
-                engine_id = samsung_engines[0].resource_name.split("/")[-1]
+                engine_id = product_engines[0].resource_name.split("/")[-1]
                 print(f"--- Found current engine ID for Memory Bank: {engine_id}")
         except Exception as e:
             print(f"--- Failed to list engines or find ID: {e}. Using default_engine.")
@@ -158,7 +158,7 @@ class SamsungAgent:
     )
 
   def get_processing_message(self) -> str:
-    return "Searching for Samsung products..."
+    return "Searching for products..."
 
   def _build_llm_agent(
       self, schema_manager: Optional[A2uiSchemaManager] = None
@@ -179,11 +179,11 @@ class SamsungAgent:
     os.environ["GOOGLE_CLOUD_LOCATION"] = "global"
     os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
     return LlmAgent(
-        model=os.getenv("MODEL", "gemini-3.1-pro-preview"),
+        model=os.getenv("MODEL", "gemini-3.1-flash-lite"),
         name=self._agent_name,
-        description="An agent that compares Samsung products.",
+        description="An agent that compares products.",
         instruction=instruction,
-        tools=[get_categories, get_products_by_category, compare_products, save_selection, get_selected_products],
+        tools=[get_categories, search_latest_products, compare_products, save_selection, get_selected_products],
         generate_content_config=types.GenerateContentConfig(
           http_options=types.HttpOptions(
             retry_options=types.HttpRetryOptions(
@@ -361,4 +361,4 @@ class SamsungAgent:
     ]
 
 # ADK web looks for 'root_agent' in this file.
-root_agent = SamsungAgent("http://0.0.0.0:8080")
+root_agent = ProductAgent("http://0.0.0.0:8080")

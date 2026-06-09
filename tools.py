@@ -1,4 +1,3 @@
-
 # Copyright 2025 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +15,11 @@
 import json
 import logging
 import os
+import re
 
 from google.adk.tools.tool_context import ToolContext
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 
@@ -25,16 +27,33 @@ PRODUCTS_DATA = {}
 
 def load_data():
     global PRODUCTS_DATA
-    try:
-        script_dir = os.path.dirname(__file__)
-        json_path = os.path.join(script_dir, "sample_samsung.json")
-        with open(json_path, mode="r", encoding="utf-8") as file:
-            PRODUCTS_DATA = json.load(file)
-        logger.info(f"Successfully loaded products data from JSON.")
-    except Exception as e:
-        logger.error(f"Error loading JSON: {e}")
+    PRODUCTS_DATA = {
+        "smartphones": [{"category": "스마트폰"}],
+        "pcs": [{"category": "PC"}],
+        "tablets": [{"category": "태블릿"}],
+        "wearables": [{"category": "웨어러블"}],
+        "tvs_monitors": [{"category": "TV"}],
+        "home_appliances": [{"category": "생활가전"}]
+    }
 
 load_data()
+
+def _extract_json(text: str) -> str:
+    # Extract JSON array or object from markdown code blocks
+    match = re.search(r"```json\s*([\s\S]*?)\s*```", text)
+    if match:
+        return match.group(1).strip()
+    
+    start_arr = text.find('[')
+    end_arr = text.rfind(']')
+    if start_arr != -1 and end_arr != -1 and end_arr > start_arr:
+        return text[start_arr:end_arr+1].strip()
+    
+    start_obj = text.find('{')
+    end_obj = text.rfind('}')
+    if start_obj != -1 and end_obj != -1 and end_obj > start_obj:
+        return text[start_obj:end_obj+1].strip()
+    return text.strip()
 
 def get_categories(tool_context: ToolContext) -> str:
     """Returns a list of unique product categories with image URLs."""
@@ -64,67 +83,115 @@ def get_categories(tool_context: ToolContext) -> str:
             
     return json.dumps(result, ensure_ascii=False)
 
-def get_products_by_category(category_id: str, tool_context: ToolContext, exclude_product: str = None) -> str:
-    """Returns a list of products in a given category ID (e.g., 'smartphones'). Option to exclude one product."""
-    logger.info(f"--- TOOL CALLED: get_products_by_category (Category ID: {category_id}, Exclude: {exclude_product}) ---")
+async def search_latest_products(category_name: str, tool_context: ToolContext, exclude_product: str = None) -> str:
+    """Searches the web for the latest 3-4 products in the given category (e.g., '스마트폰', '태블릿') and returns them as a JSON list. Option to exclude one product."""
+    logger.info(f"--- TOOL CALLED: search_latest_products (Category Name: {category_name}, Exclude: {exclude_product}) ---")
     
-    # 전역 세션 딕셔너리 대신 tool_context에 직접 상태를 저장합니다.
+    cat_map = {
+        "스마트폰": "smartphones",
+        "PC": "pcs",
+        "태블릿": "tablets",
+        "웨어러블": "wearables",
+        "TV": "tvs_monitors",
+        "생활가전": "home_appliances"
+    }
+    category_id = cat_map.get(category_name, "smartphones")
     setattr(tool_context, "current_category", category_id)
     logger.info(f"Updated current_category in tool_context: {category_id}")
-        
-    products = PRODUCTS_DATA.get(category_id, [])
     
-    result = []
-    for p in products:
-        if exclude_product and p.get("product_name") == exclude_product:
-            continue
-        result.append({
-            "name": p.get("product_name"),
-            "category": p.get("category"),
-            "url": p.get("product_url"),
-            "release_date": p.get("release_date"),
-            "spec": str(p.get("specs", {})).replace("{", "").replace("}", ""),
-            "price": p.get("specs", {}).get("price", ""),
-            "imageUrl": "https://picsum.photos/100/100?random=" + str(hash(p.get("product_name")) % 100)
-        })
-    return json.dumps(result, ensure_ascii=False)
+    client = genai.Client()
+    prompt = f"""
+    Search the web for the latest and most popular products in the category '{category_name}'.
+    Find exactly 3-4 current models that are actively sold in 2025/2026.
+    {f"Do NOT include the product '{exclude_product}' in the results." if exclude_product else ""}
+    
+    For each product, collect:
+    1. The exact product name (e.g., 'Galaxy S25 Ultra').
+    2. A short spec summary (e.g., 'Snapdragon 8 Elite, 6.9 inch Dynamic AMOLED, 200MP').
+    3. The approximate price in Korean Won (KRW) (e.g., '1,698,000 KRW').
+    4. The official product page URL. **CRITICAL**: Only include this if you find a real, active, official URL. If you cannot find a verified official URL, set "url" to null. Do NOT hallucinate or guess URLs.
+    
+    You MUST respond with a valid JSON array of objects. Do NOT wrap it in markdown blocks. Just the raw JSON.
+    Each object MUST have the following keys:
+    - "name": Exact product name.
+    - "category": "{category_name}"
+    - "url": Product detail/homepage URL (MUST be a real, verified URL, or null if not found).
+    - "release_date": Release date (YYYY-MM-DD), approximate if not exact.
+    - "spec": The spec summary.
+    - "price": The price string.
+    - "imageUrl": A placeholder image URL, e.g., "https://picsum.photos/100/100?random=<unique_number>"
+    """
+    
+    try:
+        response = client.models.generate_content(
+            model=os.environ.get("MODEL", "gemini-2.5-flash"),
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearch())]
+            )
+        )
+        result_text = _extract_json(response.text or "[]")
+        logger.info(f"Dynamic products result: {result_text}")
+        return result_text
+    except Exception as e:
+        logger.error(f"Error during search_latest_products: {e}")
+        return "[]"
 
-def get_product_details(product_name: str, tool_context: ToolContext) -> str:
-    """Returns details of a specific product."""
-    logger.info(f"--- TOOL CALLED: get_product_details (Product: {product_name}) ---")
-    for cat, products in PRODUCTS_DATA.items():
-        for p in products:
-            if p.get("product_name") == product_name:
-                return json.dumps(p, ensure_ascii=False)
-    return json.dumps({"error": "Product not found"}, ensure_ascii=False)
-
-def compare_products(product_names_str: str, tool_context: ToolContext) -> str:
-    """Compares specifications of given products. Provide product names separated by comma."""
+async def compare_products(product_names_str: str, tool_context: ToolContext) -> str:
+    """Compares specifications of given products by searching the web. Provide product names separated by comma."""
     logger.info(f"--- TOOL CALLED: compare_products (Products: {product_names_str}) ---")
     names = [n.strip() for n in product_names_str.split(",")]
-    result = {}
-    for name in names:
-        for cat, products in PRODUCTS_DATA.items():
-            for p in products:
-                if p.get("product_name") == name:
-                    result[name] = p
-    return json.dumps(result, ensure_ascii=False)
+    
+    client = genai.Client()
+    prompt = f"""
+    For each product, you MUST find:
+    1. The category.
+    2. The exact product name.
+    3. The official product page URL. **CRITICAL**: Only include this if you find a real, active, official URL. If you cannot find a verified official URL, set "product_url" to null. Do NOT hallucinate or guess URLs.
+    4. Detailed specs (processor, display, camera, battery, memory_storage, price).
+    
+    You MUST respond with a single JSON object where keys are the product names, and values are objects containing their detailed specs.
+    Example:
+    {{
+      "Product A": {{
+        "category": "스마트폰",
+        "product_name": "Product A",
+        "product_url": "https://www.example.com/products/product-a/",
+        "specs": {{
+          "processor": "Octa-core Processor",
+          "display": "6.7 inch AMOLED",
+          "camera": "50MP Main",
+          "battery": "5,000mAh",
+          "memory_storage": "12GB RAM",
+          "price": "1,000,000 KRW"
+        }}
+      }}
+    }}
+    """
+    try:
+        response = client.models.generate_content(
+            model=os.environ.get("MODEL", "gemini-2.5-flash"),
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearch())]
+            )
+        )
+        result_text = _extract_json(response.text or "{{}}")
+        logger.info(f"Dynamic comparison result: {result_text}")
+        return result_text
+    except Exception as e:
+        logger.error(f"Error during compare_products: {e}")
+        return "{{}}"
 
 def save_selection(product_names: str, tool_context: ToolContext, session_id: str = None) -> str:
     """Saves selected products to session state for long-term memory. Provide product names separated by comma."""
     logger.info(f"--- TOOL CALLED: save_selection (Products: {product_names}) ---")
-        
     names = [n.strip() for n in product_names.split(",")]
-    
-    # tool_context 객체에 선택한 상품 리스트를 속성으로 저장합니다.
     setattr(tool_context, "selected_products", names)
     logger.info(f"Updated selected_products in tool_context: {names}")
-    
     return json.dumps({"success": True, "saved": names}, ensure_ascii=False)
 
 def get_selected_products(tool_context: ToolContext, session_id: str = None) -> str:
     """Returns the list of selected products for the current session."""
-    # tool_context 객체에서 선택된 상품 리스트를 가져오며, 없을 경우 빈 리스트를 반환합니다.
     selected_products = getattr(tool_context, "selected_products", [])
-    
     return json.dumps(selected_products, ensure_ascii=False)

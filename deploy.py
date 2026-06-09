@@ -14,7 +14,6 @@
 
 """Main file for creating and managing A2UI agents on Agent Engine."""
 
-GEMINI_ENTERPRISE_APP_ID = "YOUR_APP_ID"
 
 import json
 from google.protobuf import json_format
@@ -64,7 +63,7 @@ import sys
 import a2a
 import shutil
 from a2a.types import AgentSkill
-from agent import SamsungAgent
+from agent import ProductAgent
 import agent_executor
 from dotenv import load_dotenv
 from google.auth import default
@@ -179,8 +178,8 @@ def main():
   project_id = PROJECT_ID
   location = "us-central1"
   storage = f"{PROJECT_ID}-a2ui-bucket"
-  app_id = GEMINI_ENTERPRISE_APP_ID
-  authorization = f"projects/{project_number}/locations/global/authorizations/a2ui-sample"
+  app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID", GEMINI_ENTERPRISE_APP_ID)
+  authorization = os.environ.get("AGENT_AUTHORIZATION", f"projects/{project_number}/locations/global/authorizations/a2ui-sample")
   
   # Auto-generate bucket name if missing or default
   if not storage or storage == "a2ui-bucket" or storage == "gs://a2ui-bucket":
@@ -239,18 +238,18 @@ def main():
   print("✓ Vertex AI client created.")
 
   agent_skill = AgentSkill(
-      id="samsung_comparison",
-      name="Samsung Comparison Tool",
-      description="Helps compare Samsung products.",
-      tags=["samsung", "comparison", "specs"],
+      id="product_comparison",
+      name="Product Comparison Tool",
+      description="Helps compare products.",
+      tags=["product", "comparison", "specs"],
       examples=[
-          "Compare Galaxy S24 and S24+",
+          "Compare iPhone 16 and Galaxy S25",
       ],
   )
 
-  samsung_agent_card = create_agent_card(
-      agent_name="Test Samsung Agent",
-      description="A helpful assistant agent that can compare Samsung products.",
+  product_agent_card = create_agent_card(
+      agent_name="Test Product Agent",
+      description="A helpful assistant agent that can compare products.",
       skills=[agent_skill],
       streaming=False,
       default_input_modes=["text/plain"],
@@ -258,22 +257,22 @@ def main():
   )
 
   base_url = "http://0.0.0.0:8080"
-  samsung_agent = SamsungAgent(base_url=base_url)
+  product_agent = ProductAgent(base_url=base_url)
 
-  print(f"✓ Samsung agent card created. {samsung_agent_card}")
+  print(f"✓ Product agent card created. {product_agent_card}")
 
   a2ui_agent = A2aAgent(
-      agent_card=samsung_agent_card,
-      agent_executor_builder=agent_executor.SamsungAgentExecutor,
+      agent_card=product_agent_card,
+      agent_executor_builder=agent_executor.ProductAgentExecutor,
   )
   a2ui_agent.set_up()
 
   print("✓ Local Samsung agent created.")
 
   config = {
-      "display_name": "A2UI Samsung Agent on Agent Engine",
+      "display_name": "A2UI Product Agent on Agent Engine",
       "description": (
-          "A helpful assistant agent that uses A2UI to render Samsung product comparisons."
+          "A helpful assistant agent that uses A2UI to render product comparisons."
       ),
       "agent_framework": "google-adk",
       "staging_bucket": staging_bucket,
@@ -298,17 +297,18 @@ def main():
           "__init__.py",
           "agent_executor.py",
           "prompt_builder.py",
-          "sample_samsung.json",
           "agent.py",
           "tools.py",
           "examples",
+          "a2a",
+          "a2ui",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
           "PROJECT_ID": project_id,
           "LOCATION": location,
           "GOOGLE_GENAI_USE_VERTEXAI": "TRUE",
-          "MODEL": "gemini-3.1-pro-preview"
+          "MODEL": os.environ.get("MODEL", "gemini-3.1-flash-lite")
       },
   }
 
@@ -352,9 +352,9 @@ def main():
       project_id=project_id,
       app_id=app_id,
       agent_card=a2ui_agent_card_str,
-      agent_name="a2ui_samsung_device_agent",
-      display_name="A2UI Samsung Device Agent",
-      description="A helpful assistant agent that uses A2UI to render Samsung product comparisons.",
+      agent_name="a2ui_product_comparison_agent",
+      display_name="A2UI Product Comparison Agent",
+      description="A helpful assistant agent that uses A2UI to render product comparisons.",
       agent_authorization=authorization,
   )
 

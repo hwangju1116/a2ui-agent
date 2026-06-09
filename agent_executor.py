@@ -30,14 +30,14 @@ from a2a.utils import (
 from a2a.utils.errors import ServerError
 from a2ui.a2a import try_activate_a2ui_extension
 from a2ui.core.schema.constants import VERSION_0_8
-from agent import SamsungAgent
+from agent import ProductAgent
 
 
-class SamsungAgentExecutor(AgentExecutor):
-  """Samsung AgentExecutor Example."""
+class ProductAgentExecutor(AgentExecutor):
+  """Product AgentExecutor Example."""
 
   def __init__(self, base_url: str = "http://0.0.0.0:8080"):
-    self._agent = SamsungAgent(base_url)
+    self._agent = ProductAgent(base_url)
 
   async def execute(
       self,
@@ -51,8 +51,13 @@ class SamsungAgentExecutor(AgentExecutor):
     print(f"--- Client requested extensions: {context.requested_extensions} ---")
     print(f"--- Agent card: {self._agent.agent_card} ---")
     
-    # Hardcode to 0.8 for now since playground doesn't send it
-    active_ui_version = VERSION_0_8
+    active_ui_version = try_activate_a2ui_extension(
+        context.requested_extensions,
+        self._agent.agent_card.capabilities.extensions,
+    )
+    if not active_ui_version:
+        # Fallback to VERSION_0_8 if Gemini Enterprise does not pass it explicitly but we know it supports it
+        active_ui_version = VERSION_0_8
 
     if active_ui_version:
       print(
@@ -101,6 +106,19 @@ class SamsungAgentExecutor(AgentExecutor):
               query = f"User wants to compare: {', '.join(selected_products[:2])}."
           else:
               query = f"User selected products: {', '.join(selected_products)}. Please ask to select at least 2 products for comparison."
+      elif action == "select_category":
+          category_name = ctx.get("name")
+          # Map category name to ID
+          cat_map = {
+              "스마트폰": "smartphones",
+              "PC": "pcs",
+              "태블릿": "tablets",
+              "웨어러블": "wearables",
+              "TV": "tvs_monitors",
+              "생활가전": "home_appliances"
+          }
+          category_id = cat_map.get(category_name, "smartphones")
+          query = f"User selected category: {category_name}. Please search and show the latest products using the search_latest_products tool."
       else:
           # Pass event as text query to model
           query = f"User action: {action} with context: {ctx}"
@@ -108,9 +126,15 @@ class SamsungAgentExecutor(AgentExecutor):
       print("No a2ui UI event part found. Falling back to text input.")
       query = context.get_user_input()
       
-      # Intercept product selection to manage state in Python
-      if query and query.startswith("제품 선택: "):
+      # Intercept product selection/category selection to manage state in Python
+      is_product_select_action = action == "select_product"
+      product_name = None
+      if is_product_select_action:
+          product_name = ctx.get("name")
+      elif query and query.startswith("제품 선택: "):
           product_name = query[len("제품 선택: "):]
+
+      if product_name:
           from tools import save_selection, get_selected_products
           import json
           

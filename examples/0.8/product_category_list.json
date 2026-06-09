@@ -1,7 +1,7 @@
 [
   {
     "beginRendering": {
-      "surfaceId": "action-modal",
+      "surfaceId": "category-modal",
       "root": "root",
       "styles": {
         "primaryColor": "#0C4DA2",
@@ -11,7 +11,7 @@
   },
   {
     "surfaceUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "category-modal",
       "components": [
         {
           "id": "root",
@@ -55,7 +55,8 @@
           "id": "category-item-template",
           "component": {
             "Card": {
-              "child": "category-layout"
+              "child": "category-layout",
+              "height": 80
             }
           }
         },
@@ -97,8 +98,8 @@
                 "path": "/imageUrl"
               },
               "fit": "cover",
-              "width": 200,
-              "height": 200
+              "width": 60,
+              "height": 60
             }
           }
         },
@@ -148,7 +149,7 @@
   },
   {
     "dataModelUpdate": {
-      "surfaceId": "action-modal",
+      "surfaceId": "category-modal",
       "path": "/",
       "contents": [
         {
