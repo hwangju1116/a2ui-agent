@@ -313,6 +313,8 @@ def main():
           "agent.py",
           "tools.py",
           "examples",
+          "a2a",
+          "a2ui",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
