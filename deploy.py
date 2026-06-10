@@ -172,6 +172,10 @@ def _register_agent_on_gemini_enterprise(
 import google.auth
 from google.cloud import resourcemanager_v3
 def main():
+  import os
+  print(f"🔍 DEBUG [deploy.py]: os.getcwd() = {os.getcwd()}")
+  print(f"🔍 DEBUG [deploy.py]: os.path.exists('a2a') = {os.path.exists('a2a')}")
+  print(f"🔍 DEBUG [deploy.py]: Files in CWD = {os.listdir('.')}")
   credentials, PROJECT_ID = google.auth.default()
   client = resourcemanager_v3.ProjectsClient(credentials=credentials)
   project_info = client.get_project(name=f"projects/{PROJECT_ID}")
@@ -301,6 +305,8 @@ def main():
           "google-cloud-firestore",
           "a2ui-agent-sdk==0.1.2",
           "a2a-sdk==0.3.25",
+          "starlette",
+          "sse-starlette",
       ],
       "http_options": {
           "api_version": "v1beta1",
