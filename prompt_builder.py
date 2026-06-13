@@ -31,7 +31,7 @@ WORKFLOW_DESCRIPTION = f"""
 UI_DESCRIPTION = f"""
 -   **For starting the conversation or greeting (e.g., '안녕', 'Hello'):**
     a. You MUST call the `get_categories` tool immediately.
-    b. You MUST return the list of categories using a VERTICAL list structure (strictly following `product_category_list.json`). **CRITICAL**: You MUST set the Card height to exactly 80 (as defined in `product_category_list.json`) to keep them compact. Do NOT use the product card height (200) for categories.
+    b. You MUST return the list of categories using a VERTICAL list structure (strictly following `product_category_list.json`). **CRITICAL**: You MUST set the Card width to exactly 320 and height to exactly 50 (as defined in `product_category_list.json`) to keep them compact. Do NOT use the product card dimensions (120x200) for categories.
     c. **CRITICAL:** You MUST include the `imageUrl` field for each category in the `dataModelUpdate` using the value returned by the tool.
     d. In the text portion of your response, say: "안녕하세요! 제품 비교 어시스턴트입니다. 비교할 카테고리를 선택해주세요."
 

@@ -305,8 +305,8 @@ def main():
           "google-cloud-firestore",
           "a2ui-agent-sdk==0.1.2",
           "a2a-sdk==0.3.25",
-          "starlette",
-          "sse-starlette",
+          "starlette==0.52.1",
+          "sse-starlette==3.4.4",
       ],
       "http_options": {
           "api_version": "v1beta1",

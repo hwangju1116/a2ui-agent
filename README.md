@@ -59,14 +59,18 @@ We provide a template script `generate_auth.sh` (with secrets removed). Copy the
 
 ## Local Development & Testing
 
-We provide a `Makefile` with shortcut commands to simplify development:
+You can test the agent's reasoning and A2UI JSON payload generation locally before deploying it to Google Cloud.
 
 ### Run the Agent Locally
 
-You can test the agent's reasoning and A2UI JSON payload generation locally before deploying it to Google Cloud:
+Run the local simulation script using `uv` (recommended) or by executing the script with your virtual environment's Python:
 
 ```bash
-make run
+# Using uv (recommended)
+uv run test_locally.py
+
+# Or using standard python
+python test_locally.py
 ```
 
 This executes `test_locally.py` in UI mode, simulating a two-turn conversation (greeting ➔ category selection) and printing the exact generated A2UI JSON to the console for inspection.
@@ -78,10 +82,14 @@ This executes `test_locally.py` in UI mode, simulating a two-turn conversation (
 Once local testing is successful, deploy the agent to the cloud:
 
 ```bash
-make deploy
+# Using uv (recommended)
+uv run deploy.py
+
+# Or using standard python
+python deploy.py
 ```
 
-### What `make deploy` does under the hood:
+### What `deploy.py` does under the hood:
 1.  **Packages Code**: Bundles the local Python files (`agent.py`, `agent_executor.py`, `tools.py`, `prompt_builder.py`) and the A2UI templates in the `examples/` folder.
 2.  **Deploys to Vertex AI**: Registers the agent as a **Vertex AI Reasoning Engine** and uploads it to Google Cloud.
 3.  **Registers on Gemini Enterprise**: Automatically registers/updates the agent on your Gemini Enterprise App instance, binding it to the configured OAuth Authorization.

@@ -56,7 +56,8 @@
           "component": {
             "Card": {
               "child": "category-layout",
-              "height": 80
+              "width": 320,
+              "height": 50
             }
           }
         },
@@ -98,8 +99,7 @@
                 "path": "/imageUrl"
               },
               "fit": "cover",
-              "width": 60,
-              "height": 60
+              "usageHint": "avatar"
             }
           }
         },
@@ -107,7 +107,7 @@
           "id": "category-text",
           "component": {
             "Text": {
-              "usageHint": "h4",
+              "usageHint": "body",
               "text": {
                 "path": "/category"
               }
