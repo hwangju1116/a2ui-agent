@@ -173,9 +173,6 @@ import google.auth
 from google.cloud import resourcemanager_v3
 def main():
   import os
-  print(f"🔍 DEBUG [deploy.py]: os.getcwd() = {os.getcwd()}")
-  print(f"🔍 DEBUG [deploy.py]: os.path.exists('a2a') = {os.path.exists('a2a')}")
-  print(f"🔍 DEBUG [deploy.py]: Files in CWD = {os.listdir('.')}")
   credentials, PROJECT_ID = google.auth.default()
   client = resourcemanager_v3.ProjectsClient(credentials=credentials)
   project_info = client.get_project(name=f"projects/{PROJECT_ID}")
@@ -319,8 +316,6 @@ def main():
           "agent.py",
           "tools.py",
           "examples",
-          "a2a",
-          "a2ui",
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
