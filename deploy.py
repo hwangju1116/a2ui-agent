@@ -184,14 +184,14 @@ def main():
   location = "us-central1"
   storage = f"{PROJECT_ID}-a2ui-bucket"
   import sys
-  app_id = os.environ.get("GEMINI_ENTERPRISE_APP_ID")
+  app_id = GEMINI_ENTERPRISE_APP_ID
   if not app_id or app_id == "YOUR_APP_ID" or "[본인의" in app_id:
       print("❌ Error: GEMINI_ENTERPRISE_APP_ID is not configured.")
       print("Please configure GEMINI_ENTERPRISE_APP_ID in your .env file.")
       print("Example: GEMINI_ENTERPRISE_APP_ID=a2ui-test-app_1777477684577")
       sys.exit(1)
 
-  authorization = os.environ.get("AGENT_AUTHORIZATION")
+  authorization = f"projects/{project_number}/locations/global/authorizations/a2ui-sample"
   if not authorization:
       print("❌ Error: AGENT_AUTHORIZATION is not configured.")
       print("Please configure AGENT_AUTHORIZATION in your .env file with your full OAuth authorization path.")
