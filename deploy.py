@@ -284,7 +284,7 @@ def main():
   )
   a2ui_agent.set_up()
 
-  print("✓ Local Samsung agent created.")
+  print("✓ Local Product Comparison agent created.")
 
   config = {
       "display_name": "A2UI Product Agent on Agent Engine",
