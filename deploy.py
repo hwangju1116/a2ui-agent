@@ -315,9 +315,7 @@ def main():
           "prompt_builder.py",
           "agent.py",
           "tools.py",
-          "examples",
-          "a2a",
-          "a2ui",
+          "examples"
       ],
       "env_vars": {
           "NUM_WORKERS": "1",
