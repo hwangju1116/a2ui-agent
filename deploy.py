@@ -14,7 +14,6 @@
 
 """Main file for creating and managing A2UI agents on Agent Engine."""
 GEMINI_ENTERPRISE_APP_ID = "[본인의_GEMINI_ENTERPRISE_APP_ID]"
-AGENT_AUTHORIZATION = "[본인의_AGENT_AUTHORIZATION]"
 
 
 import json
@@ -189,7 +188,7 @@ def main():
       print("Example: GEMINI_ENTERPRISE_APP_ID=a2ui-test-app_1777477684577")
       sys.exit(1)
 
-  authorization = f"projects/{project_number}/locations/global/authorizations/{AGENT_AUTHORIZATION}"
+  authorization = f"projects/{project_number}/locations/global/authorizations/product_oauth_v1"
   if not authorization:
       print("❌ Error: AGENT_AUTHORIZATION is not configured.")
       print("Please configure AGENT_AUTHORIZATION in your .env file with your full OAuth authorization path.")
